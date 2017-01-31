@@ -1,3 +1,6 @@
+# Build Folder
+src/.build
+
 # Logs
 logs
 *.log

@@ -1,14 +1,15 @@
 'use strict';
 
-var gulp = require('gulp');
-var browserify = require('browserify');
-var eslint = require('gulp-eslint');
-var source = require('vinyl-source-stream');
-var clean = require('gulp-clean');
-var livereload = require('gulp-livereload');
+const gulp = require('gulp');
+const source = require('vinyl-source-stream');
+const sequence = require('gulp-sequence');
+const eslint = require('gulp-eslint');
+const clean = require('gulp-clean');
+const browserify = require('browserify');
+const sass = require('gulp-sass');
 
-var input = './public/';
-var output = './.build/';
+const input = './public/';
+const output = './.build/';
 
 // Task for checking code lint.
 gulp.task('lint', () => 
@@ -20,7 +21,7 @@ gulp.task('lint', () =>
 
 // Task for cleaning up the output folder.
 gulp.task('clean', () => 
-  gulp.src(output + '*', {
+  gulp.src([output + '**/*', output + '*'], {
     read: false
   }).pipe(clean())
 );
@@ -30,8 +31,7 @@ gulp.task('views', () => {
   gulp.src(input + 'index.html')
     .pipe(gulp.dest(output));
   gulp.src(input + 'views/*')
-    .pipe(gulp.dest(output + 'views/'))
-    .pipe(livereload());
+    .pipe(gulp.dest(output + 'views/'));
 });
 
 // Task to build scripts.
@@ -40,19 +40,25 @@ gulp.task('browserify', () =>
     .bundle()
     .pipe(source('js/main.js'))
     .pipe(gulp.dest(output))
-    .pipe(livereload())
+);
+
+// Task to build styles.
+gulp.task('sass', () => gulp.src(input + 'styles/*.scss')
+  .pipe(sass().on('error', sass.logError))
+  .pipe(gulp.dest(output + '/css'))
 );
 
 // Watch task for files that should be built on updates.
 // Also starts the livereload server.
-gulp.task('watch', [], () => {
-  livereload.listen();
+gulp.task('watch', () => {
   gulp.watch([input + 'app/*.js', input + 'app/**/*.js'], ['browserify']);
-  gulp.watch([input + 'index.html', input + 'views/*'], ['views']);
+  gulp.watch([input + 'index.html', input + 'views/*.html', input +
+      'views/**/*.html'], ['views']);
+  gulp.watch(input + 'styles/*', ['sass']);
 });
 
-gulp.task('build', ['browserify', 'views', 'clean']);
+gulp.task('build', sequence('clean', ['browserify', 'views', 'sass']));
 
-gulp.task('dev', ['lint', 'watch']);
+gulp.task('dev', ['watch']);
 
-gulp.task('default', ['lint', 'build']);
+gulp.task('default', sequence('lint', 'build'));

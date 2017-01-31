@@ -1,6 +1,7 @@
 'use strict';
 
-const routeConfig = function($stateProvider, $urlRouterProvider) {
+const routeConfig = function($stateProvider, $urlRouterProvider,
+    $locationProvider) {
   $stateProvider
     .state('app', {
       abstract: true,
@@ -18,6 +19,9 @@ const routeConfig = function($stateProvider, $urlRouterProvider) {
       controller: 'AboutController'
     });
   $urlRouterProvider.otherwise('/');
+  if (window.history && window.history.pushState) {
+    $locationProvider.html5Mode(true);
+  }
 };
 
 module.exports = {

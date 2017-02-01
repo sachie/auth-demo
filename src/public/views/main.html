@@ -7,7 +7,13 @@
       </div>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#" ng-click="login()"><i class="fa fa-sign-in"></i> Login</a></li>
+        <li ng-show="!loggedIn()"><a href="#" ng-click="login()"><i class="fa fa-sign-in"></i> Login</a></li>
+        <li ng-show="loggedIn()">
+          <img class="nav-bar-profile-pic" src="http://www.gravatar.com/avatar/{{ user.email | gravatar }}">
+        </li>
+        <li ng-show="loggedIn()">
+          <a href="#" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</a>
+        </li>
       </ul>
     </div>
   </nav>

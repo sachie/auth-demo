@@ -3,12 +3,16 @@
   .modal-body{
     margin-left: 15px;
     margin-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 23px;
     button{
       width: 100%;
     }
     form{
       width: 100%;
       display: table;
+      margin-bottom: 5px;
+      margin-top: 0px;
       p{
         text-align: left;
       }
@@ -17,7 +21,18 @@
         vertical-align: middle;
         display: block;
       }
+      .alert{
+        padding: 5;
+      }
     }
   }
 }
 
+.nav-bar-profile-pic{
+  height: 50px;
+  padding: 10px;
+}
+
+.page-content{
+  text-align: center;
+}

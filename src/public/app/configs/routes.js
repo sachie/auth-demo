@@ -15,8 +15,7 @@ const routeConfig = function($stateProvider, $urlRouterProvider,
     })
     .state('app.about', {
       url: '/about',
-      templateUrl: 'views/about.html',
-      controller: 'AboutController'
+      templateUrl: 'views/about.html'
     });
   $urlRouterProvider.otherwise('/');
   if (window.history && window.history.pushState) {

@@ -1,6 +1,6 @@
 'use strict';
 
-const authModal = function($state, $uibModal, $rootScope) {
+const authModal = function($state, $uibModal) {
   return () => $uibModal
     .open({
       size: 'sm',
@@ -8,10 +8,6 @@ const authModal = function($state, $uibModal, $rootScope) {
       controller: 'AuthModalController',
     })
     .result
-    .then((user) => {
-      $rootScope.currentUser = user;
-      $state.go('app.home');
-    })
     .catch(error => {
       if (error && error instanceof Error) {
         console.log(error);

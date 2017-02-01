@@ -7,17 +7,21 @@ const morgan = require('morgan');
 
 const config = require('./configs/auth');
 const auth = require('./auth/auth');
+const api = require('./api/');
 
 const app = express();
 app.use(express.static(__dirname + '/.build'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
 
 auth.configure(app);
+api.configure(app);
 
 app.all('*', (req, res) => res.sendFile(__dirname + '/.build/index.html'));
 

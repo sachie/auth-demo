@@ -2,46 +2,52 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt-nodejs');
-const jwt = require('simple-jwt');
 
-const config = require('../configs/auth');
 const User = require('../models/user');
-
-const isValidPassword = function(user, password) {
-  return bcrypt.compareSync(password, user.password);
-};
+const getToken = require('../lib/token').getToken;
+const validate = require('../lib/validate');
 
 module.exports = {
-  configure: () => {
+  configure: router => {
     passport.use('login', new LocalStrategy({
       usernameField: 'email',
       passReqToCallback: true
-    }, function(req, email, password, done) {
+    }, (req, email, password, done) => {
       User.findOne({
         'email': email
-      }, function(err, user) {
-        if (err) {
-          return done(err);
+      }, (error, user) => {
+        if (error) {
+          done(error, false, 'Authentication error.');
+        } else if (!user) {
+          done(null, false, 'Incorrect username or password.');
+        } else {
+          user.comparePassword(password, function(error, isMatch) {
+            if (error) {
+              done(error);
+            } else if (!isMatch) {
+              done(null, false, 'Incorrect username or password.');
+            } else {
+              done(null, user);
+            }
+          });
         }
-        if (!user) {
-          return done(null, false, req.flash('message', 'User Not found.'));
-        }
-        if (!isValidPassword(user, password)) {
-          return done(null, false, req.flash('message', 'Invalid Password'));
-        }
-        var payload = {
-          email: user.email
-        };
-        var token = jwt.encode(payload, config.jwtSecret);
-        user.token = token;
-        user.save(function(err) {
-          if (err) {
-            return done(err);
-          }
-          return done(null, user);
-        });
       });
     }));
+
+    router.post('/login', validate('body', ['email', 'password']),
+        (req, res, next) => {
+          passport.authenticate('login', (err, user, info) => {
+            if (err) {
+              next(err);
+            } else if (!user) {
+              res.status(401).send(info);
+            } else {
+              res.cookie('token', getToken(user), {
+                maxAge: 3600000 * 24 * 7,
+                httpOnly: false
+              }).send();
+            }
+          })(req, res, next);
+        });
   }
 };

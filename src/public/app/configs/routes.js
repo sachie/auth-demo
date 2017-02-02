@@ -10,8 +10,7 @@ const routeConfig = function($stateProvider, $urlRouterProvider,
     })
     .state('app.home', {
       url: '/',
-      templateUrl: 'views/home.html',
-      controller: 'HomeController'
+      templateUrl: 'views/home.html'
     })
     .state('app.about', {
       url: '/about',

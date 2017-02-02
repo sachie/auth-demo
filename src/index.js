@@ -5,11 +5,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 
-const config = require('./configs/auth');
+const config = require('./configs');
+const loadUser = require('./middleware/loadUser');
 const auth = require('./auth/auth');
 const api = require('./api/');
 
 const app = express();
+
 app.use(express.static(__dirname + '/.build'));
 app.use(bodyParser.urlencoded({
   extended: true
@@ -17,9 +19,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
 
+loadUser.configure(app);
 auth.configure(app);
 api.configure(app);
 

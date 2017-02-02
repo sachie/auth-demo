@@ -1,16 +1,15 @@
 'use strict';
 
-const passport = require('passport');
+const loginRequired = require('../middleware/loginRequired');
 
 module.exports = {
   configure: router => {
-    router.get('/user', passport.authenticate('jwt', {
-      session: false
-    }), (req, res) => {
+    router.get('/user', loginRequired, (req, res) => {
       res.send({
         id: req.user._id,
-        firstName: req.user.firstName,
-        lastName: req.user.lastName,
+        fullName: req.user.fullName,
+        countryCode: req.user.countryCode,
+        phone: req.user.phone,
         email: req.user.email
       });
     });

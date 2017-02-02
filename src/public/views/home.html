@@ -2,31 +2,38 @@
   <br/><br/>
   <div ng-show="loadingUser"><i class="fa fa-spinner fa-spin" style="font-size:36px"></i></div>
   <div ng-show="user" class="row">
+    <div class="col-md-1"></div>
     <div class="col-md-5">
       <div class="panel panel-default">
         <div class="panel-heading"><b>Profile Information</b></div>
         <div class="panel-body">
           <img src="http://www.gravatar.com/avatar/{{ user.email | gravatar }}?s=200"><br/><br/>
           <ul class="list-group">
-            <li class="list-group-item"><label>First Name: {{user.firstName}}</label></li>
-            <li class="list-group-item"><label>Last Name: {{user.lastName}}</label></li>
+            <li class="list-group-item"><label>Full Name: {{user.fullName}}</label></li>
+            <li class="list-group-item"><label>Phone: +{{user.countryCode}} {{user.phone}}</label></li>
             <li class="list-group-item"><label>Email: {{user.email}}</label></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="col-md-5"><br/><br/><br/>
-    <p>Great! You've logged in.</p><br/>
-    <p>On the left is your profile.</p>
-    <p><a href="http://en.gravatar.com/">Gravatar</a> has been used for profile images.</p><br/>
-    <p>You can Logout if you like at the top right corner.</p><br/>
+      <p>Great! You've logged in.</p><br/>
+      <p>On the left is your profile.</p>
+      <p><a href="http://en.gravatar.com/">Gravatar</a> has been used for profile images.</p><br/>
+      <p>You can Logout if you like at the top right corner.</p><br/>
     </div>
+    <div class="col-md-1"></div>
   </div>
 
   <div ng-show="!loadingUser && !user">
     <p><b>Welcome to the Auth app.</b></p><br/>
     <p>A simple authentication demo written by Sachindra Ariyasinghe.</p><br/>
     <p>See it in action by clicking Login at the top right corner.</p>
-    <p>Visit the <a ui-sref="app.about">about</a> section to learn more.</p>
+    <p>Visit the <a ui-sref="app.about">about</a> section to learn more.</p><br/>
+    <p><b>Note:</b>
+      <a href="https://www.twilio.com/authy">Authy</a>
+      is used for Two-factor authentication. Please install and register on the authy 
+      <a href="https://www.authy.com/app/">apps</a>.
+    </p>
   </div>
 </div>

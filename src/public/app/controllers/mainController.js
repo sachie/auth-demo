@@ -4,9 +4,9 @@ const MainController = function($scope, $state, $cookies, $http, $rootScope,
     authModal, loggedIn) {
   $scope.loggedIn = loggedIn;
   $scope.login = authModal;
-  $rootScope.loadingUser = false;
 
   $scope.logout = () => {
+    $http.post('/auth/logout');
     $cookies.remove('token');
     $rootScope.user = null;
     $state.reload();

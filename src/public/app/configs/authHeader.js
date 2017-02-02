@@ -2,8 +2,7 @@
 
 const authHeader = function($http, $cookies) {
   if ($cookies.get('token')) {
-    $http.defaults.headers.common.Authorization = 'JWT ' +
-        $cookies.get('token');
+    $http.defaults.headers.common['X-API-TOKEN'] = $cookies.get('token');
   }
 };
 

@@ -1,5 +1,4 @@
 <div ng-switch="authState" ng-init="authState = 'login'">
-
   <div ng-switch-when="login" class="modal-content auth-modal">
     <div class="modal-header">
       <button type="button" class="close" ng-click="cancel()" data-dismiss="modal" aria-hidden="true">×</button>
@@ -41,6 +40,7 @@
         <div ng-show="awaitingOneTouchResult">
           <div class="alert alert-info">
             <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval
+          
           </div>
           <button type="button" class="btn btn-primary" ng-click="sendCode()" ng-disabled="oneTouchCancelled && awaitingOneTouchResult">
             <div ng-show="oneTouchCancelled && awaitingOneTouchResult">
@@ -52,10 +52,10 @@
       </form>
       <hr/>
       Don't have an account yet? 
+      
       <a href="#" ng-click="switchToRegister()">Sign up</a>
     </div>
   </div>
-
   <div ng-switch-when="register" class="modal-content auth-modal">
     <div class="modal-header">
       <button type="button" class="close" ng-click="cancel()" data-dismiss="modal" aria-hidden="true">×</button>
@@ -112,6 +112,7 @@
         <div ng-show="awaitingOneTouchResult">
           <div class="alert alert-info">
             <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval
+          
           </div>
           <button type="button" class="btn btn-primary" ng-click="sendCode()" ng-disabled="oneTouchCancelled && awaitingOneTouchResult">
             <div ng-show="oneTouchCancelled && awaitingOneTouchResult">
@@ -122,10 +123,10 @@
         </div>
       </form>
       <hr/> Already have an account? 
+      
       <a href="#" ng-click="switchToLogin()">Login</a>
     </div>
   </div>
-
   <div ng-switch-when="verify" class="modal-content auth-modal">
     <div class="modal-header">
       <button type="button" class="close" ng-click="cancel()" data-dismiss="modal" aria-hidden="true">×</button>
@@ -144,6 +145,7 @@
         <div ng-show="verifyError" class="alert alert-danger">{{verifyError}}</div>
         <div class="alert alert-info one-time-code-message" ng-show="sendingOneTimeCode">
           <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Sending One Time Code
+        
         </div>
         <button class="btn btn-success" ng-show="!sendingOneTimeCode" ng-disabled="verifying">
           <div ng-show="verifying">
@@ -153,8 +155,8 @@
         </button>
       </form>
       <hr/> Didn't receive a code? 
+      
       <a href="#" ng-click="sendCode()">Resend Code</a>
     </div>
   </div>
-
 </div>

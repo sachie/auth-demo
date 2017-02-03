@@ -58,6 +58,6 @@ gulp.task('watch', () => {
 
 gulp.task('build', sequence('clean', ['browserify', 'views', 'sass']));
 
-gulp.task('dev', ['watch']);
+gulp.task('dev', sequence('build', 'watch'));
 
 gulp.task('default', sequence('lint', 'build'));

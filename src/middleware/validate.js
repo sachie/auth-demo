@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Middleware for validating request content.
+ */
 module.exports = (location, keys) => (req, res, next) => {
   let message = '';
   let count = 1;

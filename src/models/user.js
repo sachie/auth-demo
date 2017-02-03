@@ -23,10 +23,6 @@ const UserSchema = new mongoose.Schema({
     required: true
   },
   authyId: String,
-  authyStatus: {
-    type: String,
-    default: 'unverified'
-  },
   email: {
     type: String,
     unique: true,
@@ -38,6 +34,9 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+/**
+ * Hashes the password and creates an authy user.
+ */
 UserSchema.pre('save', function(next) {
   var user = this;
   if (user.isModified('password')) {
@@ -67,45 +66,71 @@ UserSchema.pre('save', function(next) {
   }
 });
 
+/**
+ * Compares the user's hashed password against the submitted password.
+ */
 UserSchema.methods.comparePassword = function (password, callback) {
   bcrypt.compare(password, this.password, callback);
 };
 
+/**
+ * Creates a session for the user and sends a One Touch or
+ * One Time Code request.
+ */
 UserSchema.methods.createSession = function(callback) {
   const user = this;
-  user.authyStatus = 'unverified';
-  user.save();
-
   oneTouch.requestApproval(user.authyId, {
     message: 'Request to Login to Auth Demo app.',
     email: user.email
-  }, (error, authyResponse) => {
-    if (error) {
-      callback(error);
-    } else {
-      const Session = require('./session.js');
-      Session.create({
-        userId: user._id,
-        token: uuid.v1()
-      }, (error, session) => {
-        callback(error, session, authyResponse);
-      });
+  }, (error, response) => {
+    if (error && error.error_code !== '60051') {
+      return callback(error);
     }
+    if (error && !response) {
+      response = {
+        success: false
+      };
+    }
+    const Session = require('./session.js');
+    Session.create({
+      userId: user._id,
+      token: uuid.v1()
+    }, (error, session) => {
+      if (error) {
+        callback(error, session, response);
+      } else if (!response.success) {
+        user.sendAuthyToken((error) => {
+          callback(error, session, response);
+        });
+      } else {
+        callback(null, session, response);
+      }
+    });
   });
 };
 
-UserSchema.methods.sendAuthyToken = function (cb){
-  var user = this;
-  authy.request_sms(user.authyId, (err) => {
-    cb.call(user, err);
+/**
+ * Sends a One Time Code request.
+ */
+UserSchema.methods.sendAuthyToken = function(callback) {
+  const user = this;
+  authy.request_sms(user.authyId, error => {
+    callback(error);
   });
 };
 
-UserSchema.methods.verifyAuthyToken = function (otp, cb){
-  var user = this;
-  authy.verify(user.authyId, otp, (err, response) => {
-    cb.call(user, err, response);
+/**
+ * Verifies a submitted code with authy.
+ */
+UserSchema.methods.verifyAuthyToken = function (oneTimeCode, callback){
+  const user = this;
+  authy.verify(user.authyId, oneTimeCode, (error, response) => {
+    callback(error, response);
   });
 };
 
+/**
+ * The User model.
+ * @type {[type]}
+ */
 module.exports = mongoose.model('User', UserSchema);

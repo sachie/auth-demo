@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Configues UI Router.
+ */
 const routeConfig = function($stateProvider, $urlRouterProvider,
     $locationProvider) {
   $stateProvider

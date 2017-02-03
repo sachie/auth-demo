@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * Directive to compare the value to a model value.
+ * Used for the password confirmation inputs.
+ */
 const compareTo = function() {
   return {
     require: 'ngModel',

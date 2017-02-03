@@ -2,6 +2,10 @@
 
 const loginRequired = require('../middleware/loginRequired');
 
+/**
+ * Registers the route for fetching current user.
+ * @type {Object}
+ */
 module.exports = {
   configure: router => {
     router.get('/user', loginRequired, (req, res) => {

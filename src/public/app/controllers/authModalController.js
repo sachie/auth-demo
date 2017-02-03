@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Controller for the authentication modal.
+ */
 const AuthModalController = function($scope, $state, $http, $cookies) {
   $scope.cancel = $scope.$dismiss;
 
@@ -10,7 +13,7 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
     $scope.authState = 'login';
   };
   $scope.switchToVerify = () => {
-    // $scope.authState = 'verify';
+    $scope.authState = 'verify';
   };
 
   $scope.clearErrors = () => {
@@ -28,11 +31,10 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
     })
       .then((response) => {
         $scope.loggingIn = false;
+        $scope.sessionToken = response.data.token;
         if (response.data.authyResponse.success) {
           $scope.oneTouchCancelled = false;
-          $scope.getOneTouchResult(
-              response.data.authyResponse.approval_request.uuid,
-              response.data.token);
+          $scope.getOneTouchResult(response.data.authyResponse.approval_request.uuid);
         } else {
           $scope.switchToVerify();
         }
@@ -54,11 +56,10 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
     })
       .then((response) => {
         $scope.registering = false;
+        $scope.sessionToken = response.data.token;
         if (response.data.authyResponse.success) {
           $scope.oneTouchCancelled = false;
-          $scope.getOneTouchResult(
-              response.data.authyResponse.approval_request.uuid,
-              response.data.token);
+          $scope.getOneTouchResult(response.data.authyResponse.approval_request.uuid);
         } else {
           $scope.switchToVerify();
         }
@@ -68,11 +69,14 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
       });
   };
 
-  $scope.getOneTouchResult = (oneTouchId, sessionToken) => {
+  $scope.getOneTouchResult = oneTouchId => {
     $scope.awaitingOneTouchResult = true;
     $http.post('/auth/authy/status', {
-      oneTouchId,
-      token: sessionToken
+      oneTouchId
+    }, {
+      headers: {
+        'X-API-TOKEN': $scope.sessionToken
+      }
     })
       .then((response) => {
         if ($scope.oneTouchCancelled) {
@@ -80,14 +84,14 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
           $scope.clearErrors();
         } else if (response.data.status == 'approved') {
           $scope.awaitingOneTouchResult = false;
-          $scope.saveSession(sessionToken);
+          $scope.saveSession();
           $state.reload();
           $scope.$close(null);
         } else if (response.data.status == 'denied') {
           $scope.awaitingOneTouchResult = false;
           $scope.oneTouchError = 'OneTouch login denied.';
         } else {
-          setTimeout($scope.getOneTouchResult(oneTouchId, sessionToken), 3000);
+          setTimeout($scope.getOneTouchResult(oneTouchId), 2000);
         }
       }, (error) => {
         $scope.awaitingOneTouchResult = false;
@@ -95,13 +99,50 @@ const AuthModalController = function($scope, $state, $http, $cookies) {
       });
   };
 
-  $scope.cancelOneTouch = () => {
+  $scope.sendCode = () => {
+    if ($scope.authState !== 'verify') {
+      $scope.switchToVerify();
+    }
     $scope.oneTouchCancelled = true;
+    $scope.sendingOneTimeCode = true;
+    $scope.verifyError = false;
+    $http.post('/auth/session/resend', {}, {
+      headers: {
+        'X-API-TOKEN': $scope.sessionToken
+      }
+    })
+      .then(() => {
+        $scope.sendingOneTimeCode = false;
+      }, error => {
+        $scope.verifyError = error.data;
+        $scope.sendingOneTimeCode = false;
+      });
   };
 
-  $scope.saveSession = sessionToken => {
-    $cookies.put('token', sessionToken);
-    $http.defaults.headers.common['X-API-TOKEN'] = sessionToken;
+  $scope.verify = oneTimeCode => {
+    $scope.verifying = true;
+    $scope.verifyError = false;
+    $http.post('/auth/session/verify', {
+      oneTimeCode
+    }, {
+      headers: {
+        'X-API-TOKEN': $scope.sessionToken
+      }
+    })
+      .then(() => {
+        $scope.verifying = false;
+        $scope.saveSession();
+        $state.reload();
+        $scope.$close(null);
+      }, error => {
+        $scope.verifyError = error.data;
+        $scope.verifying = false;
+      });
+  };
+
+  $scope.saveSession = () => {
+    $cookies.put('token', $scope.sessionToken);
+    $http.defaults.headers.common['X-API-TOKEN'] = $scope.sessionToken;
   };
 };
 

@@ -1,10 +1,13 @@
 'use strict';
 
+/**
+ * Service to open the authentication modal.
+ */
 const authModal = function($state, $uibModal) {
   return () => $uibModal
     .open({
       size: 'sm',
-      templateUrl: 'views/authModalTemplate.html',
+      templateUrl: 'views/authModal.html',
       controller: 'AuthModalController',
     })
     .result

@@ -11,7 +11,9 @@
         <div class="form-group" ng-class="{ 'has-error' : loginForm.email.$touched &&
           loginForm.email.$invalid}">
           <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-at""></i></span>
+            <span class="input-group-addon">
+              <i class="fa fa-at""></i>
+            </span>
             <input type="email" class="form-control" placeholder="Email" name="email" ng-model="_email" required/>
           </div>
           <p ng-show="loginForm.email.$touched && loginForm.email.$invalid" class="help-block">Please enter a valid email.</p>
@@ -19,29 +21,38 @@
         <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$touched &&
           loginForm.password.$invalid}">
           <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+            <span class="input-group-addon">
+              <i class="fa fa-key"></i>
+            </span>
             <input type="password" class="form-control" placeholder="Password" name="password" ng-model="_password" required/>
           </div>
           <p ng-show="loginForm.password.$touched && loginForm.password.$invalid" class="help-block">Please enter a valid password.</p>
         </div>
-        <div ng-show="loginerror" class="alert alert-danger" ng-cloak>{{loginerror}}</div>
-        <div ng-show="oneTouchError" class="alert alert-danger" ng-cloak>{{oneTouchError}}</div>
+        <div ng-show="loginError" class="alert alert-danger">{{loginError}}</div>
+        <div ng-show="oneTouchError" class="alert alert-danger">{{oneTouchError}}</div>
         <div ng-show="!awaitingOneTouchResult">
-          <button class="btn btn-success">
-            <div ng-show="loggingIn"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
+          <button class="btn btn-success" ng-disabled="loggingIn">
+            <div ng-show="loggingIn">
+              <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+            </div>
             <span ng-show="!loggingIn">Login</span>
           </button>
         </div>
         <div ng-show="awaitingOneTouchResult">
-          <div class="alert alert-info" ng-cloak><i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval</div>
-          <button type="button" class="btn btn-danger" ng-click="cancelOneTouch()">
-            <div ng-show="oneTouchCancelled && awaitingOneTouchResult"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
-            <span ng-show="awaitingOneTouchResult && !oneTouchCancelled">Cancel</span>
+          <div class="alert alert-info">
+            <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval
+          </div>
+          <button type="button" class="btn btn-primary" ng-click="sendCode()" ng-disabled="oneTouchCancelled && awaitingOneTouchResult">
+            <div ng-show="oneTouchCancelled && awaitingOneTouchResult">
+              <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+            </div>
+            <span ng-show="awaitingOneTouchResult && !oneTouchCancelled">Get a code</span>
           </button>
         </div>
       </form>
       <hr/>
-      Don't have an account yet? <a href="#" ng-click="switchToRegister()">Sign up</a>
+      Don't have an account yet? 
+      <a href="#" ng-click="switchToRegister()">Sign up</a>
     </div>
   </div>
 
@@ -66,14 +77,16 @@
         <div class="form-group" ng-class="{ 'has-error' : registerForm.countryCode.$touched &&
           registerForm.countryCode.$invalid}">
           <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-plus"></i></span>
+            <span class="input-group-addon">
+              <i class="fa fa-plus"></i>
+            </span>
             <input type="number" minlength="1" maxlength="3" class="form-control" placeholder="Country Code (94)" name="countryCode" ng-model="_countryCode" required/>
           </div>
           <p ng-show="registerForm.countryCode.$touched && registerForm.countryCode.$invalid" class="help-block">A valid country code is required.</p>
         </div>
         <div class="form-group" ng-class="{ 'has-error' : registerForm.phone.$touched &&
           registerForm.phone.$invalid}">
-          <input type="number" minlength="9" maxlength="9" class="form-control" placeholder="Phone Number (777123456)" name="phone" ng-model="_phone" required/>
+          <input type="number" minlength="9" maxlength="10" class="form-control" placeholder="Phone Number (777123456)" name="phone" ng-model="_phone" required/>
           <p ng-show="registerForm.phone.$touched && registerForm.phone.$invalid" class="help-block">A valid phone number is required.</p>
         </div>
         <div class="form-group" ng-class="{ 'has-error' : registerForm.password.$touched &&
@@ -86,24 +99,61 @@
           <input type="password" class="form-control" placeholder="Confirm Password" name="confirmPassword" ng-model="_confirmPassword" compare-to="_password" required />
           <p ng-show="registerForm.confirmPassword.$touched && registerForm.confirmPassword.$invalid" class="help-block">Passwords do not match.</p>
         </div>
-        <div ng-show="registerError" class="alert alert-danger" ng-cloak>{{registerError}}</div>
-        <div ng-show="oneTouchError" class="alert alert-danger" ng-cloak>{{oneTouchError}}</div>
+        <div ng-show="registerError" class="alert alert-danger">{{registerError}}</div>
+        <div ng-show="oneTouchError" class="alert alert-danger">{{oneTouchError}}</div>
         <div ng-show="!awaitingOneTouchResult">
-          <button class="btn btn-success" ng-disabled="registerForm.$invalid">
-            <div ng-show="registering"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
+          <button class="btn btn-success" ng-disabled="registerForm.$invalid" ng-disabled="registering">
+            <div ng-show="registering">
+              <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+            </div>
             <span ng-show="!registering">Sign up</span>
           </button>
         </div>
         <div ng-show="awaitingOneTouchResult">
-          <div class="alert alert-info" ng-cloak><i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval</div>
-          <button type="button" class="btn btn-danger" ng-click="cancelOneTouch()">
-            <div ng-show="oneTouchCancelled && awaitingOneTouchResult"><i class="fa fa-spinner fa-spin" style="font-size:24px"></i></div>
-            <span ng-show="awaitingOneTouchResult && !oneTouchCancelled">Cancel</span>
+          <div class="alert alert-info">
+            <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Awaiting OneTouch Approval
+          </div>
+          <button type="button" class="btn btn-primary" ng-click="sendCode()" ng-disabled="oneTouchCancelled && awaitingOneTouchResult">
+            <div ng-show="oneTouchCancelled && awaitingOneTouchResult">
+              <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+            </div>
+            <span ng-show="awaitingOneTouchResult && !oneTouchCancelled">Get a code</span>
           </button>
         </div>
       </form>
-      <br/> Already have an account? <a href="#" ng-click="switchToLogin()">Login</a>
+      <hr/> Already have an account? 
+      <a href="#" ng-click="switchToLogin()">Login</a>
+    </div>
+  </div>
+
+  <div ng-switch-when="verify" class="modal-content auth-modal">
+    <div class="modal-header">
+      <button type="button" class="close" ng-click="cancel()" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 class="modal-title">Verify</h3>
+    </div>
+    <div class="modal-body">
       <br/>
+      <p>A verification code has been sent to your device or Authy app.</p>
+      <br/>
+      <form name="verifyForm" ng-submit="verify(_code)" data-toggle="validator">
+        <div class="form-group" ng-class="{ 'has-error' : verifyForm.code.$touched &&
+          verifyForm.code.$invalid}">
+          <input type="number" class="form-control" placeholder="Verification Code" name="code" ng-model="_code" required/>
+          <p ng-show="verifyForm.code.$touched && verifyForm.code.$invalid" class="help-block">Please enter a valid code.</p>
+        </div>
+        <div ng-show="verifyError" class="alert alert-danger">{{verifyError}}</div>
+        <div class="alert alert-info one-time-code-message" ng-show="sendingOneTimeCode">
+          <i class="fa fa-spinner fa-spin" style="font-size:18px"></i> &nbsp;&nbsp;Sending One Time Code
+        </div>
+        <button class="btn btn-success" ng-show="!sendingOneTimeCode" ng-disabled="verifying">
+          <div ng-show="verifying">
+            <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+          </div>
+          <span ng-show="!verifying">Submit</span>
+        </button>
+      </form>
+      <hr/> Didn't receive a code? 
+      <a href="#" ng-click="sendCode()">Resend Code</a>
     </div>
   </div>
 

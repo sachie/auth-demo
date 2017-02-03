@@ -18,4 +18,8 @@ var SessionSchema = new mongoose.Schema({
   }
 });
 
+/**
+ * The Session model.
+ * @type {[type]}
+ */
 module.exports = mongoose.model('Session', SessionSchema);

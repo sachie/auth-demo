@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Root app controller.
+ */
 const MainController = function($scope, $state, $cookies, $http, $rootScope,
     authModal, loggedIn) {
   $scope.loggedIn = loggedIn;

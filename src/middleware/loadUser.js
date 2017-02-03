@@ -3,6 +3,10 @@
 const Session = require('../models/session');
 const User = require('../models/user');
 
+/**
+ * Middleware to load the user for each request.
+ * @type {Object}
+ */
 module.exports = {
   configure: app => {
     app.use((request, response, next) => {

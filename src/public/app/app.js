@@ -1,3 +1,8 @@
+/**
+ * Entry Point for the Angular app.
+ * All the components are attached to the app here.
+ */
+
 'use strict';
 
 const angular = require('angular');

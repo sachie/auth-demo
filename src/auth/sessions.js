@@ -1,24 +1,31 @@
 'use strict';
 
-const Session = require('../models/session');
 const validate = require('../middleware/validate');
 const oneTouch = require('../lib/oneTouch');
 
+/**
+ * Registers routes for managing login sessions.
+ * @type {Object}
+ */
 module.exports = {
   configure: router => {
+
+    /**
+     * Route for checking status of a One Touch request.
+     */
     router
-      .post('/authy/status', validate('body', ['oneTouchId', 'token']), (req, res) => {
+      .post('/authy/status', validate('body', ['oneTouchId']), (req, res) => {
+        if (!req.session || !req.user) {
+          return res.status(404).send('No valid session found for this token.');
+        }
         oneTouch.checkStatus(req.body.oneTouchId, (error, authyResponse) => {
           if (error) {
             return res.status(500).send('There was an error while checking your status.');
           }
           const status = authyResponse.body.approval_request.status;
           if (status === 'approved') {
-            Session.findOneAndUpdate({
-              token: req.body.token
-            }, {
-              verified: true
-            }, {}, (error) => {
+            req.session.verified = true;
+            req.session.save((error) => {
               if (error) {
                 res.status(500).send('Error updating session, please try again.');
               }
@@ -34,41 +41,41 @@ module.exports = {
         });
       });
 
-    router.post('/session/verify', (req, res) => {
-      var oneTimeCode = req.body.code;
-
-      if (!req.session || !req.user) {
-        return res.status(404).send('No valid session found for this token.');
-      }
-
-      req.user.verifyAuthyToken(oneTimeCode, error => {
-        if (error) {
-          return res.status(401).send('Invalid confirmation code.');
+    /**
+     * Route for submitting a verification code.
+     */
+    router
+      .post('/session/verify', validate('body', ['oneTimeCode']), (req, res) => {
+        if (!req.session || !req.user) {
+          return res.status(404).send('No valid session found for this token.');
         }
-
-        req.session.confirmed = true;
-        req.session.save(error => {
+        req.user.verifyAuthyToken(req.body.oneTimeCode, error => {
           if (error) {
-            return res.status(500).send('There was an error validating your session.');
+            return res.status(401).send('Invalid confirmation code.');
           }
-          res.send({
-            token: req.session.token
+          req.session.verified = true;
+          req.session.save(error => {
+            if (error) {
+              return res.status(500).send('There was an error validating your session.');
+            }
+            res.send({
+              token: req.session.token
+            });
           });
         });
       });
-    });
 
-    router.post('/session/resend', (req, res) => {
-      if (!req.user) {
-        return res.status(404).send('No user found for this session, please log in again.');
-      }
-
-      req.user.sendAuthyToken(() => {
+    /**
+     * Route for resending a verification code.
+     */
+    router
+      .post('/session/resend', (req, res) => {
         if (!req.user) {
-          return res.status(500).send('No user found for this session, please log in again.');
+          return res.status(404).send('No user found for this session, please log in again.');
         }
-        res.status(200).send();
+        req.user.sendAuthyToken(() => {
+          res.status(200).send();
+        });
       });
-    });
   }
 };

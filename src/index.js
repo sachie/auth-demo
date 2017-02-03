@@ -1,3 +1,7 @@
+/**
+ * Entry Point for the Node app.
+ */
+
 'use strict';
 
 const express = require('express');

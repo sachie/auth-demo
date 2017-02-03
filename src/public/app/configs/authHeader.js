@@ -6,6 +6,10 @@ const authHeader = function($http, $cookies) {
   }
 };
 
+/**
+ * Adds a default header with the session token, if it is available.
+ * @type {Object}
+ */
 module.exports = {
   attach: (app) => app.run(authHeader)
 };

@@ -49,7 +49,6 @@ gulp.task('sass', () => gulp.src(input + 'styles/*.scss')
 );
 
 // Watch task for files that should be built on updates.
-// Also starts the livereload server.
 gulp.task('watch', () => {
   gulp.watch([input + 'app/*.js', input + 'app/**/*.js'], ['browserify']);
   gulp.watch([input + 'index.html', input + 'views/*.html', input +

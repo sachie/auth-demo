@@ -6,7 +6,7 @@ A simple MEAN stack application that demonstrates Two-Factor Authentication with
 &nbsp;
 #### Live Demo
 
-See the live demo [HERE](https://www.twilio.com/authy).
+See the live demo [HERE](http://35.165.38.224/).
 
 &nbsp;
 #### Building Locally
@@ -28,7 +28,8 @@ See the live demo [HERE](https://www.twilio.com/authy).
     $ npm run build
     $ npm start
     ```
-    
+* Visit [http://localhost:8000](http://localhost:8000).
+
 For easy deployment, sandbox keys for the Mongo database, at [mLab](https://mlab.com/), and Authy API have been commited with the code.
 
 &nbsp;

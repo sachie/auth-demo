@@ -95,3 +95,7 @@ Once logged in, the session token will be stored as a cookie and used for subseq
 * Asynchronous processes on the client side are indicated with progress spinners.
 * The Angular hashbang has been disabled and a catch all route has been added to express which redirects to the website.
 * The site has been tested on Google Chrome and Mozilla Firefox.
+
+##### Possible Enhancements
+* Adding a country select dropdown for the country code input.
+* Set up SSL with [Nginx](https://www.nginx.com/resources/wiki/) and [Lets Encrypt](https://letsencrypt.org/)

@@ -4,11 +4,6 @@ By Sachindra Ariyasinghe
 A simple MEAN stack application that demonstrates Two-Factor Authentication with [Authy](https://www.twilio.com/authy).
 
 &nbsp;
-#### Live Demo
-
-See the live demo [HERE](http://35.165.38.224/).
-
-&nbsp;
 #### Building Locally
 [NodeJS](https://nodejs.org/) version 6+ is required for ES6 support.
 
